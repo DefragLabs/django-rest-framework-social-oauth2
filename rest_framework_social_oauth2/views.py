@@ -40,11 +40,36 @@ class TokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
             request._request.POST[key] = value
 
         url, headers, body, status = self.create_token_response(request._request)
-        response = Response(data=json.loads(body), status=status)
+        body = self._handle_custom_error_response(body)
+        response = Response(data=body, status=status)
 
         for k, v in headers.items():
             response[k] = v
         return response
+
+    @staticmethod
+    def _handle_custom_error_response(body):
+        body = json.loads(body)
+        if 'error_description' in body:
+            error_description = json.loads(body['error_description'])
+            error_code = error_description.get('code')
+            error_detail = error_description.get('detail')
+            email = error_description.get('email')
+
+            custom_error_response = {
+                "data": None,
+                "success": False,
+                "error": {
+                    "code": error_code,
+                    "detail": error_detail
+                }
+            }
+
+            if email:
+                custom_error_response['error']['email'] = email
+
+            return custom_error_response
+        return body
 
 
 class ConvertTokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
