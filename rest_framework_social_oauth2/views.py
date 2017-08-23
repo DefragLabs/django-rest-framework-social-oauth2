@@ -43,7 +43,7 @@ class TokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
         body = json.loads(body)
         if status == 200:
             custom_success_response = {
-                "data": json.loads(body),
+                "data": body,
                 "success": True,
                 "error": None
             }
@@ -81,7 +81,7 @@ class ConvertTokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
 
         if status == 200:
             custom_success_response = {
-                "data": json.loads(body),
+                "data": body,
                 "success": True,
                 "error": None
             }
