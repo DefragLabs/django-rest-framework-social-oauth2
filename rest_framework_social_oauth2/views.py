@@ -40,6 +40,7 @@ class TokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
             request._request.POST[key] = value
 
         url, headers, body, status = self.create_token_response(request._request)
+        print(status, body)
 
         response = Response(data=json.loads(body), status=status)
         for k, v in headers.items():
@@ -68,6 +69,7 @@ class ConvertTokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
             request._request.POST[key] = value
 
         url, headers, body, status = self.create_token_response(request._request)
+        print(status, body)
         body = self._handle_custom_error_response(body)
         response = Response(data=body, status=status)
 
