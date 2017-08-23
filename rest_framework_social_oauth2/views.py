@@ -40,9 +40,17 @@ class TokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
             request._request.POST[key] = value
 
         url, headers, body, status = self.create_token_response(request._request)
-        print(status, body)
+        body = json.loads(body)
+        if status == 200:
+            custom_success_response = {
+                "data": json.loads(body),
+                "success": True,
+                "error": None
+            }
 
-        response = Response(data=json.loads(body), status=status)
+            body = custom_success_response
+
+        response = Response(data=body, status=status)
         for k, v in headers.items():
             response[k] = v
         return response
@@ -69,8 +77,17 @@ class ConvertTokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
             request._request.POST[key] = value
 
         url, headers, body, status = self.create_token_response(request._request)
-        print(status, body)
         body = self._handle_custom_error_response(body)
+
+        if status == 200:
+            custom_success_response = {
+                "data": json.loads(body),
+                "success": True,
+                "error": None
+            }
+
+            body = custom_success_response
+
         response = Response(data=body, status=status)
 
         for k, v in headers.items():
