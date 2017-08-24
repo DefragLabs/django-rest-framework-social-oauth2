@@ -98,10 +98,14 @@ class ConvertTokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
     def _handle_custom_error_response(body):
         body = json.loads(body)
         if 'error_description' in body:
-            if isinstance(body['error_description'], dict):
-                error_description = body['error_description']
-            else:
+            try:
                 error_description = json.loads(body['error_description'])
+            except json.JSONDecodeError:
+                error_description = body['error_description']
+
+            if isinstance(error_description, str):
+                return body
+
             error_code = error_description.get('code')
             error_detail = error_description.get('detail')
             email = error_description.get('email')
