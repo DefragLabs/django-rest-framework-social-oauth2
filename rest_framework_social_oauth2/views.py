@@ -106,22 +106,11 @@ class ConvertTokenView(CsrfExemptMixin, OAuthLibMixin, APIView):
             if isinstance(error_description, str):
                 return body
 
-            error_code = error_description.get('code')
-            error_detail = error_description.get('detail')
-            email = error_description.get('email')
-
             custom_error_response = {
                 "data": None,
                 "success": False,
-                "error": {
-                    "code": error_code,
-                    "detail": error_detail
-                }
+                "error": error_description
             }
-
-            if email:
-                custom_error_response['error']['email'] = email
-
             return custom_error_response
         return body
 
